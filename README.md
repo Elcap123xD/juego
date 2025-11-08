@@ -22,25 +22,49 @@ Este repositorio contiene la base para un prototipo de juego battle royale estil
 
 ## Ejecución local
 
-1. Instalar dependencias del servidor:
+> Todos los comandos se asumen desde la raíz del repositorio (`/workspace/juego`).
+
+1. **Instalar dependencias del servidor**
+
    ```bash
    cd server
    npm install
    ```
 
-2. Levantar el servidor en modo desarrollo:
+2. **Levantar el backend en caliente**
+
+   El servidor escucha en `http://localhost:8080` y expone el WebSocket en la misma dirección.
+
    ```bash
    npm run dev
    ```
 
-3. Abrir el cliente en el navegador:
+   > Deja este proceso corriendo en una terminal.
+
+3. **Servir el cliente estático**
+
+   En otra terminal, desde la raíz del repo, levanta un servidor de archivos apuntando a la carpeta `client`:
+
+   Con Node (npx `serve`):
+
    ```bash
-   cd ..
    npx serve client
    ```
-   (Puedes usar cualquier servidor estático; por ejemplo `python -m http.server` dentro de `client`).
 
-4. Navega a `http://localhost:3000` (u otro puerto que utilice tu servidor estático). El cliente intentará conectarse al servidor WebSocket en `ws://localhost:8080`.
+   Con Python (alternativa sin dependencias extras):
+
+   ```bash
+   cd client
+   python -m http.server 3000
+   ```
+
+4. **Abrir el juego**
+
+   En tu navegador accede a la URL mostrada por el servidor estático (por defecto `http://localhost:3000`). El cliente se conectará automáticamente al WebSocket del backend en `ws://localhost:8080`.
+
+5. **(Opcional) Configurar variables**
+
+   Si necesitas cambiar los puertos, edita las constantes en `client/src/game.js` y `server/src/server.js` para que apunten a las nuevas direcciones.
 
 ## Próximos pasos sugeridos
 
