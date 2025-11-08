@@ -1,0 +1,17 @@
+{
+  "name": "battle-royale-server",
+  "version": "0.1.0",
+  "description": "Servidor prototipo para juego battle royale estilo Fortnite",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "NODE_ENV=development node src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "uuid": "^9.0.1",
+    "ws": "^8.16.0"
+  }
+}
