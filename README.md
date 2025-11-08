@@ -24,30 +24,61 @@ Este repositorio contiene la base para un prototipo de juego battle royale estil
 
 > Todos los comandos se asumen desde la raíz del repositorio (`/workspace/juego`).
 
-1. **Instalar dependencias del servidor**
+### 1. Preparar dependencias
+
+```bash
+cd server
+npm install
+```
+
+### 2. Escoger tu modo de ejecución
+
+#### Opción A: Servidor unificado (recomendado)
+
+El backend expone las APIs y sirve el cliente estático desde la misma URL (`http://localhost:8080`).
+
+```bash
+npm start
+```
+
+- El proceso queda escuchando en la terminal actual. Presiona `Ctrl+C` para detenerlo.
+- Abre `http://localhost:8080` en tu navegador. El cliente detecta automáticamente el host y puerto para el WebSocket.
+- Puedes personalizar el puerto con la variable de entorno `PORT` (`PORT=3000 npm start`).
+
+#### Opción B: Servidor y cliente por separado
+
+Si prefieres trabajar con un servidor de archivos distinto (por ejemplo, `npm run dev` de Vite o un servidor estático), puedes seguir estos pasos:
+
+1. Inicia el backend únicamente con APIs y WebSockets:
 
    ```bash
-   cd server
-   npm install
+   npm run server
    ```
 
-2. **Levantar el servidor unificado**
+   Este script ejecuta el servidor con la opción `--no-static`, por lo que no intentará servir archivos del cliente. El puerto por defecto es `8080` (configurable con `PORT`).
 
-   El backend ahora expone tanto las APIs como los archivos estáticos del cliente en la misma URL (`http://localhost:8080`).
+2. Sirve el cliente desde la carpeta `client/` con tu herramienta preferida. Un ejemplo sencillo usando `http-server`:
 
    ```bash
-   npm start
+   cd client
+   npx http-server -p 5173
    ```
 
-   > El proceso queda escuchando en la terminal actual. Presiona `Ctrl+C` para detenerlo.
+3. Abre el navegador en la URL del cliente (por ejemplo `http://localhost:5173`).
 
-3. **Abrir el juego**
+   El archivo `client/src/game.js` lee la variable `window.GAME_SERVER_URL`. Si sirves el cliente desde otro dominio o puerto, define la variable antes de cargar el script:
 
-   Visita `http://localhost:8080` en tu navegador. El cliente detecta el puerto automáticamente y mantiene la comunicación WebSocket usando el mismo origen.
+   ```html
+   <script>
+     window.GAME_SERVER_URL = "ws://localhost:8080";
+   </script>
+   <script src="src/game.js" type="module"></script>
+   ```
 
-4. **(Opcional) Configurar variables**
+### 3. Configuración adicional
 
-   Puedes modificar el puerto estableciendo la variable de entorno `PORT` antes de ejecutar `npm start` o editando `server/src/server.js`. El cliente utiliza `window.location`, por lo que no requiere cambios adicionales si ambos se sirven desde el mismo host.
+- Edita `server/src/server.js` para cambiar reglas de lobby, tamaño del mapa u otras constantes.
+- Usa `CLIENT_DIR=/ruta/a/tu/build npm start` si quieres que el servidor unificado sirva un cliente compilado distinto al incluido en `client/`.
 
 ## Instaladores automatizados
 

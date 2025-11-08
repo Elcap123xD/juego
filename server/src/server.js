@@ -16,9 +16,15 @@ app.use(express.json());
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const CLIENT_DIR = process.env.CLIENT_DIR
-  ? path.resolve(process.env.CLIENT_DIR)
-  : path.resolve(__dirname, '../../client');
+
+const SERVE_STATIC =
+  !process.argv.includes('--no-static') && process.env.DISABLE_STATIC !== '1';
+
+const CLIENT_DIR = SERVE_STATIC
+  ? process.env.CLIENT_DIR
+    ? path.resolve(process.env.CLIENT_DIR)
+    : path.resolve(__dirname, '../../client')
+  : null;
 
 const httpServer = createServer(app);
 const wss = new WebSocketServer({ server: httpServer });
@@ -203,17 +209,19 @@ app.post('/api/matches/:matchId/complete', (req, res) => {
   res.json({ matchId, winnerId, stats });
 });
 
-app.use(express.static(CLIENT_DIR));
+if (SERVE_STATIC && CLIENT_DIR) {
+  app.use(express.static(CLIENT_DIR));
 
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api')) {
-    return next();
-  }
-  if (req.path === '/health') {
-    return next();
-  }
-  res.sendFile(path.join(CLIENT_DIR, 'index.html'));
-});
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    if (req.path === '/health') {
+      return next();
+    }
+    res.sendFile(path.join(CLIENT_DIR, 'index.html'));
+  });
+}
 
 httpServer.listen(PORT, () => {
   console.log(`Servidor battle royale escuchando en http://localhost:${PORT}`);

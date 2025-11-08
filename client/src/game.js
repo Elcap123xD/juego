@@ -38,8 +38,15 @@ class LobbyScene extends Phaser.Scene {
   }
 
   connect() {
-    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const endpoint = `${protocol}://${window.location.host}`;
+    const customEndpoint = window.GAME_SERVER_URL;
+    let endpoint;
+    if (typeof customEndpoint === 'string' && customEndpoint.length > 0) {
+      endpoint = customEndpoint;
+    } else {
+      const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      endpoint = `${protocol}://${window.location.host}`;
+    }
+
     this.socket = new WebSocket(endpoint);
 
     this.socket.addEventListener('open', () => {
